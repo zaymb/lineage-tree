@@ -1,0 +1,174 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1938.5" height="1136" viewBox="0 0 1938.5 1136">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<g fill="none" stroke="#111111" stroke-width="0.8" stroke-dasharray="1 5" stroke-linecap="round">
+<path d="M539.5 40V1096"/>
+<path d="M850 40V1096"/>
+<path d="M1316.5 40V1096"/>
+<path d="M1586.5 40V1096"/>
+</g>
+<g fill="none" stroke="#111111" stroke-width="0.8" stroke-dasharray="3 3">
+
+</g>
+<g fill="none" stroke="#111111" stroke-width="0.8" stroke-linejoin="miter">
+<path d="M104.5 80H190M181 96H190M181 112H190M181 144H1610.5M181 160H1610.5M181 192H1610.5M181 80V208H1610.5"/>
+<path d="M238 112H346M337 112V128H346"/>
+<path d="M1649.5 144H1730.5"/>
+<path d="M1649.5 160H1730.5M1721.5 160V176H1730.5"/>
+<path d="M1649.5 192H1730.5"/>
+<path d="M131.5 240H190M181 256H190M181 304H1610.5M181 240V320H1610.5"/>
+<path d="M233.5 240H346"/>
+<path d="M238 256H346M337 272H346M337 256V288H1610.5"/>
+<path d="M1654 304H1730.5"/>
+<path d="M1645 320H1730.5"/>
+<path d="M122.5 352H190M181 368H190M181 384H563.5M181 400H563.5M181 416H563.5M181 432H563.5M181 464H1610.5M181 352V480H1610.5"/>
+<path d="M229 352H346"/>
+<path d="M229 368H346"/>
+<path d="M611.5 384H688"/>
+<path d="M607 400H688"/>
+<path d="M647.5 416H688"/>
+<path d="M607 432H688M679 432V448H688"/>
+<path d="M1649.5 464H1730.5"/>
+<path d="M1649.5 480H1730.5"/>
+<path d="M158.5 512H190M181 528H563.5M181 544H874M181 560H874M181 592H1340.5M181 608H1340.5M181 512V624H1340.5"/>
+<path d="M224.5 512H346"/>
+<path d="M922 544H1075"/>
+<path d="M913 560H1075M1066 560V576H1075"/>
+<path d="M1114 560H1195"/>
+<path d="M1118.5 576H1195"/>
+<path d="M1397.5 592H1442.5"/>
+<path d="M1379.5 608H1442.5"/>
+<path d="M1393 624H1442.5"/>
+<path d="M131.5 656H190M181 672H563.5M181 688H563.5M181 704H874M181 656V720H1340.5"/>
+<path d="M233.5 656H346"/>
+<path d="M602.5 672H688"/>
+<path d="M593.5 688H688"/>
+<path d="M1370.5 720H1442.5"/>
+<path d="M172 752H1340.5M181 768H1610.5M181 784H1610.5M181 752V800H1610.5"/>
+<path d="M1379.5 752H1442.5"/>
+<path d="M1649.5 768H1730.5"/>
+<path d="M1658.5 800H1730.5M1721.5 800V816H1730.5"/>
+<path d="M140.5 848H190M181 864H874M181 880H874M181 896H1340.5M181 912H1610.5M181 848V944H1610.5"/>
+<path d="M922 880H1075"/>
+<path d="M1388.5 896H1442.5"/>
+<path d="M1667.5 912H1730.5M1721.5 912V928H1730.5"/>
+<path d="M1649.5 944H1730.5"/>
+<path d="M82 976H563.5M181 992H563.5M181 1008H874M181 1024H874M181 1040H874M181 1056H874M181 1072H1340.5M181 976V1088H1340.5"/>
+<path d="M598 976H688"/>
+<path d="M922 1008H1075"/>
+<path d="M922 1040H1075"/>
+<path d="M917.5 1056H1075"/>
+<path d="M1370.5 1072H1442.5"/>
+</g>
+<g fill="#111111" font-family="'D-DIN', 'DIN Alternate', 'Helvetica Neue', Arial, sans-serif" font-size="10">
+<text x="40" y="51.5">Start</text>
+<text x="569.5" y="51.5">A01a</text>
+<text x="880" y="51.5">A01b</text>
+<text x="1346.5" y="51.5">A02</text>
+<text x="1616.5" y="51.5">A03</text>
+<text x="40" y="83.5">Reading Kafka</text>
+<text x="196" y="83.5">Bureaucracy critique reading</text>
+<text x="196" y="99.5">Labyrinth reading</text>
+<text x="196" y="115.5">Benjamin</text>
+<text x="352" y="115.5">on Kafka</text>
+<text x="352" y="131.5">the prehistoric</text>
+<text x="1616.5" y="147.5" fill="#d4161c">Sontag</text>
+<text x="1736.5" y="147.5" fill="#d4161c">Against Interpretation</text>
+<text x="1616.5" y="163.5" fill="#d4161c">Butler</text>
+<text x="1736.5" y="163.5" fill="#d4161c">Who Owns Kafka?</text>
+<text x="1736.5" y="179.5" fill="#d4161c">Kafka and the Poetics of Non-Arrival</text>
+<text x="1616.5" y="195.5" fill="#d4161c">Adorno</text>
+<text x="1736.5" y="195.5" fill="#d4161c">Notes on Kafka</text>
+<text x="1616.5" y="211.5">Vogl</text>
+<text x="40" y="243.5">Ethics and attitude</text>
+<text x="196" y="243.5" fill="#d4161c">Bakhtin</text>
+<text x="352" y="243.5" fill="#d4161c">polyphony</text>
+<text x="196" y="259.5" fill="#d4161c">Simondon</text>
+<text x="352" y="259.5" fill="#d4161c">crystal unfinished</text>
+<text x="352" y="275.5" fill="#d4161c">individuation, metastability</text>
+<text x="1616.5" y="291.5" fill="#d4161c">disparation</text>
+<text x="1616.5" y="307.5">Levinas</text>
+<text x="1736.5" y="307.5">Totality and Infinity</text>
+<text x="1616.5" y="323.5">Keats</text>
+<text x="1736.5" y="323.5">negative capability</text>
+<text x="40" y="355.5">Archive and truth</text>
+<text x="196" y="355.5" fill="#d4161c">Sebald</text>
+<text x="352" y="355.5" fill="#d4161c">pseudo-archival writing</text>
+<text x="196" y="371.5">Sekula</text>
+<text x="352" y="371.5">The Body and the Archive</text>
+<text x="569.5" y="387.5">Foucault</text>
+<text x="694" y="387.5">The Archaeology of Knowledge</text>
+<text x="569.5" y="403.5">Derrida</text>
+<text x="694" y="403.5" fill="#d4161c">Archive Fever</text>
+<text x="569.5" y="419.5">Daston &amp; Galison</text>
+<text x="694" y="419.5">mechanical objectivity</text>
+<text x="569.5" y="435.5">Barthes</text>
+<text x="694" y="435.5">La chambre claire</text>
+<text x="694" y="451.5">camera lucida</text>
+<text x="1616.5" y="467.5">Arendt</text>
+<text x="1736.5" y="467.5">Truth and Politics</text>
+<text x="1616.5" y="483.5">Searle</text>
+<text x="1736.5" y="483.5">brute and institutional fact</text>
+<text x="40" y="515.5">Photography and composite</text>
+<text x="196" y="515.5" fill="#d4161c">Atget</text>
+<text x="352" y="515.5" fill="#d4161c">plate photography</text>
+<text x="569.5" y="531.5">Kaiserpanorama</text>
+<text x="880" y="547.5" fill="#d4161c">Sugimoto</text>
+<text x="1081" y="547.5" fill="#d4161c">long exposure</text>
+<text x="880" y="563.5">Galton</text>
+<text x="1081" y="563.5">Burson</text>
+<text x="1201" y="563.5">War Head I</text>
+<text x="1081" y="579.5" fill="#d4161c">Vionnet</text>
+<text x="1201" y="579.5" fill="#d4161c">Photo Opportunities</text>
+<text x="1346.5" y="595.5" fill="#d4161c">Idris Khan</text>
+<text x="1448.5" y="595.5" fill="#d4161c">every... Becher</text>
+<text x="1346.5" y="611.5" fill="#d4161c">Becher</text>
+<text x="1448.5" y="611.5" fill="#d4161c">typological grid</text>
+<text x="1346.5" y="627.5" fill="#d4161c">Muybridge</text>
+<text x="1448.5" y="627.5" fill="#d4161c">Animal Locomotion</text>
+<text x="40" y="659.5">Model and black box</text>
+<text x="196" y="659.5" fill="#d4161c">Flusser</text>
+<text x="352" y="659.5" fill="#d4161c">Towards a Philosophy of Photography</text>
+<text x="569.5" y="675.5">Berger</text>
+<text x="694" y="675.5">Confabulations</text>
+<text x="569.5" y="691.5" fill="#d4161c">Cage</text>
+<text x="694" y="691.5" fill="#d4161c">chance operations</text>
+<text x="880" y="707.5" fill="#d4161c">Black box, interpretability, emergence</text>
+<text x="1346.5" y="723.5">Seth</text>
+<text x="1448.5" y="723.5">controlled hallucination</text>
+<text x="40" y="755.5">Representation and recursion</text>
+<text x="1346.5" y="755.5">Vertov</text>
+<text x="1448.5" y="755.5">Man with a Movie Camera</text>
+<text x="1616.5" y="771.5">Borges</text>
+<text x="1736.5" y="771.5">On Exactitude in Science</text>
+<text x="1616.5" y="787.5">Synecdoche, New York</text>
+<text x="1616.5" y="803.5">Magritte</text>
+<text x="1736.5" y="803.5" fill="#d4161c">The Human Condition</text>
+<text x="1736.5" y="819.5">Not to Be Reproduced</text>
+<text x="40" y="851.5">Space and observation</text>
+<text x="196" y="851.5">Forensic Architecture</text>
+<text x="880" y="867.5">Wavefunction collapse</text>
+<text x="880" y="883.5">Topology</text>
+<text x="1081" y="883.5">intrinsic sphere</text>
+<text x="1346.5" y="899.5">Lefebvre</text>
+<text x="1448.5" y="899.5">representations of space</text>
+<text x="1616.5" y="915.5" fill="#d4161c">de Certeau</text>
+<text x="1736.5" y="915.5" fill="#d4161c">walkers</text>
+<text x="1736.5" y="931.5">tour and map</text>
+<text x="1616.5" y="947.5">Ingold</text>
+<text x="1736.5" y="947.5">dwelling perspective</text>
+<text x="40" y="979.5">Notation</text>
+<text x="569.5" y="979.5">Wolff</text>
+<text x="694" y="979.5">Skizze drawings</text>
+<text x="569.5" y="995.5">Naked City / Netzbild</text>
+<text x="880" y="1011.5" fill="#d4161c">Lombardi</text>
+<text x="1081" y="1011.5" fill="#d4161c">narrative structures</text>
+<text x="880" y="1027.5">Hachure confidence field</text>
+<text x="880" y="1043.5">Gilbreth</text>
+<text x="1081" y="1043.5">Process Charts</text>
+<text x="880" y="1059.5">Tschumi</text>
+<text x="1081" y="1059.5">three-track sheet</text>
+<text x="1346.5" y="1075.5" fill="#d4161c">RYBN</text>
+<text x="1448.5" y="1075.5" fill="#d4161c">ALGOFFSHORE</text>
+<text x="1346.5" y="1091.5" fill="#d4161c">P&amp;ID / ISO 10628</text>
+</g>
+</svg>
