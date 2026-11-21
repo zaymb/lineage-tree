@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="580" height="336" viewBox="0 0 580 336">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<g fill="none" stroke="#111111" stroke-width="0.8" stroke-dasharray="1 5" stroke-linecap="round">
+<path d="M200 40V296"/>
+<path d="M325 40V296"/>
+<path d="M470 40V296"/>
+</g>
+<g fill="none" stroke="#111111" stroke-width="0.8" stroke-dasharray="3 3">
+
+</g>
+<g fill="none" stroke="#111111" stroke-width="0.8" stroke-linejoin="miter">
+<path d="M86 80H224M110 80V96H349"/>
+<path d="M101 128H224M110 128V144H224"/>
+<path d="M76 176H119M110 176V192H224"/>
+<path d="M76 224H349M110 224V240H349"/>
+<path d="M86 272H494M110 272V288H494"/>
+</g>
+<g fill="#111111" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10">
+<text x="40" y="51.5">Brief</text>
+<text x="230" y="51.5">Fieldwork</text>
+<text x="355" y="51.5">Design</text>
+<text x="500" y="51.5">Final</text>
+<text x="40" y="83.5">Pictures</text>
+<text x="230" y="83.5">Pinhole week</text>
+<text x="355" y="99.5">Kiosk prints</text>
+<text x="40" y="131.5">Paper trail</text>
+<text x="230" y="131.5">Room 4 box</text>
+<text x="230" y="147.5" fill="#d4161c">Ledger 1974</text>
+<text x="40" y="179.5">Voices</text>
+<text x="125" y="179.5" fill="#d4161c">Aunty Mei</text>
+<text x="230" y="195.5">Kitchen tapes</text>
+<text x="40" y="227.5">Models</text>
+<text x="355" y="227.5" fill="#d4161c">Cardboard Tuesday</text>
+<text x="355" y="243.5">Wax block</text>
+<text x="40" y="275.5">Drawings</text>
+<text x="500" y="275.5" fill="#d4161c">Sheet 12</text>
+<text x="500" y="291.5">Pipe key</text>
+</g>
+</svg>

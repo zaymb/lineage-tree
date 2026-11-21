@@ -62,7 +62,8 @@ counted as full width.
 - `@top TEXT` and `@bottom TEXT` (optional) name what the two ends of the spectrum are about;
   `--order semantic` uses them to decide which way up the page reads.
 - Flags: `keep` (lasted to the end, drawn red), `also=Other lineage` (also belongs to that
-  lineage), `class=CODE` (position on an ordering axis, see below).
+  lineage), `class=CODE` (position on an ordering axis, see below), `gave=TEXT` (what it gave
+  the project, in one line; read by `--order semantic`).
 - A child cannot be earlier than its parent. Inside a lineage, names are ordered by stage, then
   by their order in the file.
 
@@ -96,12 +97,18 @@ not from re-arranging by hand each time. Four orders are built in:
   graves, 1899); here the finds are lineages. `also=` links come first and are never broken:
   lineages that share names stay together. The remaining freedom is settled by meaning: each
   lineage is embedded as its label plus every name under it, and among all orders that keep the
-  links, the one whose neighbours are most alike wins (exhaustive up to 9 lineages). A chain of
+  links, the one whose neighbours are most alike wins (exhaustive up to 9 lineages). A famous
+  name already means something to the model; a little-known one (a studio, a local archive, your
+  own earlier project) does not, so write what it gave you with `gave=`. `--embed names` or
+  `--embed gave` reads only one of the two, for comparison. A chain of
   likeness has no direction, so the end closer to `@top` goes on top (or, without anchors, the
   end holding the file's first lineage). The output also prints the two runners-up and how much
   less alike their neighbours are, so a close call is visible. Needs a local
   [Ollama](https://ollama.com) server; the default model is `qwen3-embedding:4b`
-  (`--model`, `--ollama` to change). Use `--order axis` as well when you want a classification
+  (`--model`, `--ollama` to change). [`example/cold.md`](example/cold.md) is a made-up project
+  in which no name is known to the model; there, names alone order the five lineages worse than
+  chance (Kendall τ −0.2 against the intended order), and adding `gave=` brings it to 0.4: one
+  lineage still lands in a different place. Use `--order axis` as well when you want a classification
   to have the last word.
 
 Which lineage a name belongs to stays a judgement. The questionnaire gives one test for it:

@@ -76,6 +76,7 @@ STYLE = dict(
 class Node:
     def __init__(self, label, cohort=None, keep=False, also=None):
         self.cls = None           # class= value: a key on the ordering axis (see --axis)
+        self.gave = None          # gave= text: what it gave the project, in one line (--order semantic)
         self.label = label
         self.cohort = cohort      # index into cohorts; None on a heading = earliest child
         self.keep = keep
@@ -105,6 +106,8 @@ def parse_outline(path):
                 node.also = f[5:].strip()
             elif f.startswith("class="):
                 node.cls = f[6:].strip()
+            elif f.startswith("gave="):
+                node.gave = f[5:].strip()
             elif f in cohorts:
                 node.cohort = cohorts.index(f)
             elif f:
@@ -276,16 +279,24 @@ def spectrum_order(roots, sim=None, toward=None):
     return [roots[i] for i in best], score(best), score(list(range(n))), near(best), runners, spread
 
 
-def semantic_similarity(roots, model, url, anchors=None):
+def describe(node, embed):
+    """What a name contributes to its lineage's embedding: names, gave= texts, or both."""
+    if embed == "names" or not node.gave:
+        return node.label
+    return node.gave if embed == "gave" else f"{node.label} ({node.gave})"
+
+
+def semantic_similarity(roots, model, url, anchors=None, embed="both"):
     """Cosine similarity between lineages, from a local Ollama embedding model.
 
-    Each lineage is embedded as its label followed by every name and concept under it. Returns
+    Each lineage is embedded as its label followed by every name and concept under it (with its
+    gave= text, see describe). Returns
     the matrix, and with @top/@bottom anchors also each lineage's pull toward the top (else None).
     """
     import json
     import math
     import urllib.request
-    texts = [r.label + ": " + ", ".join(n.label for n in walk(r.children)) for r in roots]
+    texts = [r.label + ": " + "; ".join(describe(n, embed) for n in walk(r.children)) for r in roots]
     ends = [k for k in ("top", "bottom") if (anchors or {}).get(k)]
     texts += [anchors[k] for k in ends]
     req = urllib.request.Request(url.rstrip("/") + "/api/embed",
@@ -517,11 +528,14 @@ def main():
     ap.add_argument("--model", default="qwen3-embedding:4b",
                     help="Ollama embedding model for --order semantic")
     ap.add_argument("--ollama", default="http://localhost:11434", help="Ollama server URL")
+    ap.add_argument("--embed", choices=["both", "names", "gave"], default="both",
+                    help="what --order semantic reads for each name: name and gave= text (default), "
+                         "names only, or gave= text only (names without one fall back to the name)")
     args = ap.parse_args()
 
     cohorts, roots, anchors = parse_outline(args.outline)
     if args.order in ("auto", "semantic"):
-        sim, toward = (semantic_similarity(roots, args.model, args.ollama, anchors)
+        sim, toward = (semantic_similarity(roots, args.model, args.ollama, anchors, args.embed)
                        if args.order == "semantic" else (None, None))
         roots, got, had, near, runners, spread = spectrum_order(roots, sim, toward)
         extra = f"; similarity of neighbours {near:.3f} ({args.model})" if sim else ""

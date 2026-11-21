@@ -31,6 +31,8 @@ Do not sort yet.
 
 "Lasted to the end" means it is still visible in the final piece. Those rows get the `keep` flag
 and are drawn red.
+The last column becomes `gave=` on the outline line (`## Name | stage | gave=what it gave you`).
+`--order semantic` reads it, which matters most for names few people would recognise.
 
 ---
 
