@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="368" viewBox="0 0 1080 368">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<g fill="none" stroke="#111111" stroke-width="0.8" stroke-dasharray="1 5" stroke-linecap="round">
+<path d="M380 40V328"/>
+<path d="M660 40V328"/>
+<path d="M925 40V328"/>
+</g>
+<g fill="none" stroke="#111111" stroke-width="0.8" stroke-dasharray="3 3">
+
+</g>
+<g fill="none" stroke="#111111" stroke-width="0.8" stroke-linejoin="miter">
+<path d="M136 80H154M145 80V96H404"/>
+<path d="M211 80H259"/>
+<path d="M451 96H509"/>
+<path d="M76 128H154M145 128V144H404"/>
+<path d="M491 144H509"/>
+<path d="M71 176H404M145 192H684M145 176V208H949"/>
+<path d="M456 176H509"/>
+<path d="M721 192H784"/>
+<path d="M86 240H684M145 240V256H684"/>
+<path d="M721 240H784"/>
+<path d="M731 256H784"/>
+<path d="M126 288H154M145 304H404M145 288V320H684"/>
+<path d="M201 288H259"/>
+<path d="M446 304H509"/>
+</g>
+<g fill="#111111" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10">
+<text x="40" y="51.5">Brief</text>
+<text x="410" y="51.5">Concept</text>
+<text x="690" y="51.5">Development</text>
+<text x="955" y="51.5">Final</text>
+<text x="40" y="83.5">Memory and archive</text>
+<text x="160" y="83.5">Halbwachs</text>
+<text x="265" y="83.5" fill="#d4161c">collective memory</text>
+<text x="410" y="99.5">Derrida</text>
+<text x="515" y="99.5">Archive Fever</text>
+<text x="40" y="131.5">Method</text>
+<text x="160" y="131.5">Grounded theory</text>
+<text x="410" y="147.5">Action research</text>
+<text x="515" y="147.5" fill="#d4161c">reflection-in-action</text>
+<text x="40" y="179.5">Space</text>
+<text x="410" y="179.5" fill="#d4161c">Lefebvre</text>
+<text x="515" y="179.5" fill="#d4161c">The Production of Space</text>
+<text x="690" y="195.5">Lynch</text>
+<text x="790" y="195.5">The Image of the City</text>
+<text x="955" y="211.5" fill="#d4161c">Parametric survey</text>
+<text x="40" y="243.5">Notation</text>
+<text x="690" y="243.5">Laban</text>
+<text x="790" y="243.5" fill="#d4161c">Labanotation</text>
+<text x="690" y="259.5">Tschumi</text>
+<text x="790" y="259.5" fill="#d4161c">Manhattan Transcripts</text>
+<text x="40" y="291.5">Image and record</text>
+<text x="160" y="291.5" fill="#d4161c">Barthes</text>
+<text x="265" y="291.5" fill="#d4161c">Camera Lucida</text>
+<text x="410" y="307.5">Sontag</text>
+<text x="515" y="307.5">On Photography</text>
+<text x="690" y="323.5">Photogrammetry</text>
+</g>
+</svg>

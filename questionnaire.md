@@ -9,7 +9,7 @@ outline for `lineage_tree.py`. Each section of the questionnaire becomes one par
 
 List the stages of the project in order. These become the columns of the drawing.
 
-| # | Stage name (short, e.g. "A01a", "Sketch", "Week 1–3") | Dates |
+| # | Stage name (short, e.g. "Brief", "Concept", "Week 1–3") | Dates |
 |---|---|---|
 | 1 | | |
 | 2 | | |

@@ -4,6 +4,7 @@
     python3 lineage_tree.py lineage_names.md            -> lineage_names.svg
     python3 lineage_tree.py lineage_names.md -o out.svg
     python3 lineage_tree.py lineage_names.md --order auto   # reorder lineages into a spectrum
+    python3 lineage_tree.py lineage_names.md --order ddc    # order by class= tags on an axis
 
 Reading the drawing
     Across a dashed line is time: a label sits in the cohort where it first appears.
@@ -30,6 +31,7 @@ Outline format (see the top of lineage_names.md)
     > note                            ignored
     flags:  keep                      lasted to the end
             also=Other lineage        also belongs to that lineage (dashed link)
+            class=720                 position on an ordering axis (--order ddc / warburg)
 """
 import argparse
 import re
@@ -40,11 +42,11 @@ from xml.sax.saxutils import escape
 
 STYLE = dict(
     # type (rule 2). Label widths are measured from font_file (needs Pillow: pip install pillow).
-    font_family="'D-DIN', 'DIN Alternate', 'Helvetica Neue', Arial, sans-serif",
-    font_file=None,        # e.g. "D-DIN.otf"; path to the font, absolute or relative to this script; None = estimate
+    font_family="'Helvetica Neue', Helvetica, Arial, sans-serif",
+    font_file=None,        # path to the font to measure with, absolute or relative to this script; None = estimate
     font_size=10,          # px
-    char_advance=0.45,     # only used when font_file is missing: average glyph width / font size
-                           # (0.6 for a monospace face, about 0.45 for D-DIN)
+    char_advance=0.5,      # only used when font_file is missing: average glyph width / font size
+                           # (about 0.6 for a monospace face, 0.45-0.5 for a narrow sans)
     # spacing
     row_pitch=16,          # px between rows
     pad=6,                 # px between text and a line end (rule 3)
@@ -72,6 +74,7 @@ STYLE = dict(
 
 class Node:
     def __init__(self, label, cohort=None, keep=False, also=None):
+        self.cls = None           # class= value: a key on the ordering axis (see AXES)
         self.label = label
         self.cohort = cohort      # index into cohorts; None on a heading = earliest child
         self.keep = keep
@@ -99,6 +102,8 @@ def parse_outline(path):
                 node.keep = True
             elif f.startswith("also="):
                 node.also = f[5:].strip()
+            elif f.startswith("class="):
+                node.cls = f[6:].strip()
             elif f in cohorts:
                 node.cohort = cohorts.index(f)
             elif f:
@@ -135,6 +140,48 @@ def parse_outline(path):
 
 
 # ---------------------------------------------------------------- lineage order
+
+# Ordering axes: a standard classification read as one continuous spectrum. A `class=` flag on
+# any line names a position on the axis, either by its number or by its label.
+AXES = {
+    # Dewey Decimal Classification, the ten main classes in their standard order.
+    "ddc": ["000 General works", "100 Philosophy and psychology", "200 Religion",
+            "300 Social sciences", "400 Language", "500 Science", "600 Technology",
+            "700 Arts and recreation", "800 Literature", "900 History and geography"],
+    # The four categories of the Warburg Institute Library.
+    "warburg": ["Image", "Word", "Orientation", "Action"],
+}
+
+
+def axis_position(cls, axis, where):
+    """Position of a class= value on the axis: exact label, leading code, or a DDC number."""
+    keys = AXES[axis]
+    low = cls.lower()
+    for i, k in enumerate(keys):
+        if low == k.lower() or low == k.split(" ", 1)[0].lower() or low == k.split(" ", 1)[-1].lower():
+            return float(i)
+    if axis == "ddc":
+        m = re.match(r"(\d{1,3})(\.\d+)?$", cls)
+        if m:
+            return float(cls) / 100                   # 720.9 -> 7.209: subdivisions keep their order
+    sys.exit(f"'{where}': class={cls} is not on the {axis} axis ({', '.join(keys)})")
+
+
+def axis_order(roots, axis):
+    """Order lineages by where their names sit on the axis.
+
+    A lineage's position is the median of the class= positions found on it and everything under
+    it (a class on the lineage heading counts like any other). Lineages with no class keep their
+    place relative to the file order, after the classified ones. Ties break by file order.
+    """
+    keyed = []
+    for i, root in enumerate(roots):
+        pos = sorted(axis_position(n.cls, axis, n.label) for n in walk([root]) if n.cls)
+        mid = (pos[(len(pos) - 1) // 2] + pos[len(pos) // 2]) / 2 if pos else None
+        keyed.append((mid is None, mid if mid is not None else 0, i, root))
+    keyed.sort(key=lambda k: k[:3])
+    return [k[3] for k in keyed], [(k[3].label, k[1] if not k[0] else None) for k in keyed]
+
 
 def links_between(roots):
     """Count `also=` links between every pair of lineages: {(i, j): n} with i < j."""
@@ -386,9 +433,9 @@ def main():
     ap = argparse.ArgumentParser(description="Draw a cohort-column tree from a Markdown outline.")
     ap.add_argument("outline")
     ap.add_argument("-o", "--output")
-    ap.add_argument("--order", choices=["file", "auto"], default="file",
-                    help="lineage order top to bottom: as written (default), or a spectrum "
-                         "computed from the also= links")
+    ap.add_argument("--order", choices=["file", "auto"] + sorted(AXES), default="file",
+                    help="lineage order top to bottom: as written (default); auto = a spectrum "
+                         "from the also= links; ddc / warburg = by the class= tags on that axis")
     args = ap.parse_args()
 
     cohorts, roots = parse_outline(args.outline)
@@ -397,6 +444,11 @@ def main():
         print(f"order (also= links between neighbours: {had} -> {got}):")
         for r in roots:
             print(f"    # {r.label}")
+    elif args.order in AXES:
+        roots, report = axis_order(roots, args.order)
+        print(f"order on the {args.order} axis (median class position):")
+        for label, pos in report:
+            print(f"    {'unclassified' if pos is None else f'{pos:6.2f}'}  # {label}")
     svg, width, height = render(roots, cohorts, STYLE)
     out = Path(args.output) if args.output else Path(args.outline).with_suffix(".svg")
     out.write_text(svg, encoding="utf-8")
