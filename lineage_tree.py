@@ -222,8 +222,8 @@ def spectrum_order(roots, sim=None, toward=None):
     @top anchor minus its similarity to the @bottom anchor), the end closer to @top goes on top;
     otherwise the end holding the file's first lineage does. Returns the order, its link score,
     the file order's link score, its similarity score, the runners-up as (order, gap), and the
-    spread of similarity over all orders that keep the links: (sd, how many, how many within
-    a quarter sd of the best), or None above 9 lineages.
+    spread of similarity over all orders that keep the links: (sd, how many), or None above
+    9 lineages.
     """
     n = len(roots)
     links = links_between(roots)
@@ -240,7 +240,7 @@ def spectrum_order(roots, sim=None, toward=None):
         legal = [near(p) for p in ranked if score(p) == score(best) and p < p[::-1]]
         mean = sum(legal) / len(legal)
         sd = (sum((x - mean) ** 2 for x in legal) / len(legal)) ** 0.5 or 1.0
-        spread = (sd, len(legal), sum(near(best) - x <= sd / 4 for x in legal))
+        spread = (sd, len(legal))
         for p in ranked[1:]:
             if len(runners) == 2 or sim is None:
                 break
@@ -535,8 +535,7 @@ def main():
             sds = f", {gap / spread[0]:.2f} sd" if spread else ""
             print(f"runner-up {k} (similarity {gap:.3f} lower{sds}): " + " > ".join(r.label for r in alt))
         if sim and spread:
-            print(f"{spread[2]} of {spread[1]} orders that keep the also= links are within "
-                  f"a quarter sd ({spread[0] / 4:.3f}) of the best")
+            print(f"sd = spread of similarity over the {spread[1]} orders that keep the also= links")
     elif args.order == "axis":
         if not args.axis:
             ap.error("--order axis needs --axis FILE (see axes/ for examples)")
