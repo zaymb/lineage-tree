@@ -4,6 +4,7 @@
     python3 lineage_tree.py lineage_names.md            -> lineage_names.svg
     python3 lineage_tree.py lineage_names.md -o out.svg
     python3 lineage_tree.py lineage_names.md --order auto   # reorder lineages into a spectrum
+    python3 lineage_tree.py lineage_names.md --order semantic   # also= links, then meaning (Ollama)
     python3 lineage_tree.py lineage_names.md --order axis --axis axes/ddc.txt   # by class= tags
 
 Reading the drawing
@@ -89,8 +90,8 @@ class Node:
 
 
 def parse_outline(path):
-    """Return (cohorts, roots). cohorts = [name], roots = [Node]."""
-    cohorts, roots, stack = [], [], []
+    """Return (cohorts, roots, anchors). cohorts = [name], roots = [Node], anchors = {top, bottom}."""
+    cohorts, roots, stack, anchors = [], [], [], {}
 
     def make(text):
         fields = [f.strip() for f in text.split("|")]
@@ -117,6 +118,9 @@ def parse_outline(path):
         try:
             if line.startswith("@cohort"):
                 cohorts.append(line[len("@cohort"):].strip())
+            elif line.startswith(("@top", "@bottom")):
+                key, _, text = line[1:].partition(" ")
+                anchors[key] = text.strip()
             elif line.startswith("#"):
                 hashes, text = re.fullmatch(r"(#+)\s*(.+)", line).groups()
                 depth = len(hashes) - 1
@@ -131,12 +135,12 @@ def parse_outline(path):
                     raise ValueError("bullet appears before any heading")
                 stack[-1].children.append(make(line[2:]))
             else:
-                raise ValueError("line is not a heading, a bullet, a @cohort or a > note")
+                raise ValueError("line is not a heading, a bullet, a @cohort, @top, @bottom or a > note")
         except ValueError as e:
             sys.exit(f"{path}:{n}: {e}\n    {raw}")
     if not cohorts:
         sys.exit(f"{path}: no @cohort lines")
-    return cohorts, roots
+    return cohorts, roots, anchors
 
 
 # ---------------------------------------------------------------- lineage order
@@ -204,22 +208,41 @@ def links_between(roots):
     return links
 
 
-def spectrum_order(roots):
+def spectrum_order(roots, sim=None, toward=None):
     """Order lineages so that neighbours share as many `also=` links as possible.
 
-    Score of an order = links between adjacent lineages. Among equally good orders, the one
-    closest to the file order wins (fewest swapped pairs), so lineages with no links stay put.
+    Score of an order = links between adjacent lineages. With `sim` (a similarity matrix, see
+    semantic_similarity), equally linked orders are then ranked by the similarity of adjacent
+    lineages, so linked lineages stay together and the rest are placed by meaning. Among orders
+    that are still equal, the one closest to the file order wins (fewest swapped pairs), so
+    lineages with nothing to go on stay put.
     Exhaustive up to 9 lineages; above that, a greedy chain from the best-linked pair.
+
+    Links and similarity have no direction. With `toward` (each lineage's similarity to the
+    @top anchor minus its similarity to the @bottom anchor), the end closer to @top goes on top;
+    otherwise the end holding the file's first lineage does. Returns the order, its link score,
+    the file order's link score, its similarity score, and the runners-up as (order, gap).
     """
     n = len(roots)
     links = links_between(roots)
-    w = lambda a, b: links.get((min(a, b), max(a, b)), 0)
-    score = lambda p: sum(w(a, b) for a, b in zip(p, p[1:]))
+    s = sim or [[0.0] * n for _ in range(n)]
+    w = lambda a, b: (links.get((min(a, b), max(a, b)), 0), s[a][b])
+    score = lambda p: sum(w(a, b)[0] for a, b in zip(p, p[1:]))
+    near = lambda p: sum(s[a][b] for a, b in zip(p, p[1:]))
     swaps = lambda p: sum(1 for x in range(n) for y in range(x + 1, n) if p[x] > p[y])
     if n <= 9:
         from itertools import permutations
-        best = max(permutations(range(n)), key=lambda p: (score(p), -swaps(p)))
+        ranked = sorted(permutations(range(n)), key=lambda p: (score(p), near(p), -swaps(p)),
+                        reverse=True)
+        best, seen, runners = ranked[0], {min(ranked[0], ranked[0][::-1])}, []
+        for p in ranked[1:]:
+            if len(runners) == 2 or sim is None:
+                break
+            if min(p, p[::-1]) not in seen:
+                seen.add(min(p, p[::-1]))
+                runners.append(p)
     else:
+        runners = []
         left = set(range(n))
         a, b = max(((a, b) for a in left for b in left if a < b), key=lambda e: (w(*e), -e[0]))
         best, left = [a, b], left - {a, b}
@@ -230,9 +253,51 @@ def spectrum_order(roots):
                 best.insert(0, head); left.remove(head)
             else:
                 best.append(tail); left.remove(tail)
-    if list(best) == sorted(best, reverse=True):
-        best = list(reversed(best))                  # same spectrum, keep the file's direction
-    return [roots[i] for i in best], score(best), score(list(range(n)))
+    def orient(p):
+        p = list(p)
+        if toward is not None:
+            if toward[p[0]] < toward[p[-1]]:
+                p.reverse()
+        elif sim is not None:
+            if p.index(0) > n - 1 - p.index(0):
+                p.reverse()
+        elif p == sorted(p, reverse=True):
+            p.reverse()                              # same spectrum, keep the file's direction
+        return p
+
+    best = orient(best)
+    runners = [([roots[i] for i in orient(p)], near(best) - near(p)) for p in runners]
+    return [roots[i] for i in best], score(best), score(list(range(n))), near(best), runners
+
+
+def semantic_similarity(roots, model, url, anchors=None):
+    """Cosine similarity between lineages, from a local Ollama embedding model.
+
+    Each lineage is embedded as its label followed by every name and concept under it. Returns
+    the matrix, and with @top/@bottom anchors also each lineage's pull toward the top (else None).
+    """
+    import json
+    import math
+    import urllib.request
+    texts = [r.label + ": " + ", ".join(n.label for n in walk(r.children)) for r in roots]
+    ends = [k for k in ("top", "bottom") if (anchors or {}).get(k)]
+    texts += [anchors[k] for k in ends]
+    req = urllib.request.Request(url.rstrip("/") + "/api/embed",
+                                 json.dumps({"model": model, "input": texts}).encode(),
+                                 {"Content-Type": "application/json"})
+    try:
+        vecs = json.load(urllib.request.urlopen(req, timeout=300))["embeddings"]
+    except Exception as e:
+        sys.exit(f"--order semantic needs an Ollama server with {model} at {url} ({e})")
+    norm = [math.sqrt(sum(x * x for x in v)) for v in vecs]
+    sim = [[sum(x * y for x, y in zip(a, b)) / (na * nb) for b, nb in zip(vecs, norm)]
+           for a, na in zip(vecs, norm)]
+    n = len(roots)
+    if not ends:
+        return [row[:n] for row in sim[:n]], None
+    sign = {"top": 1, "bottom": -1}
+    toward = [sum(sign[k] * sim[i][n + e] for e, k in enumerate(ends)) for i in range(n)]
+    return [row[:n] for row in sim[:n]], toward
 
 
 # ---------------------------------------------------------------- layout
@@ -438,18 +503,30 @@ def main():
     ap = argparse.ArgumentParser(description="Draw a cohort-column tree from a Markdown outline.")
     ap.add_argument("outline")
     ap.add_argument("-o", "--output")
-    ap.add_argument("--order", choices=["file", "auto", "axis"], default="file",
+    ap.add_argument("--order", choices=["file", "auto", "semantic", "axis"], default="file",
                     help="lineage order top to bottom: as written (default); auto = by shared "
-                         "also= names; axis = by the class= tags on the --axis file")
+                         "also= names; semantic = also= links first, then similarity of meaning; "
+                         "axis = by the class= tags on the --axis file")
     ap.add_argument("--axis", help="ordering axis for --order axis: a text file, one class per line")
+    ap.add_argument("--model", default="qwen3-embedding:4b",
+                    help="Ollama embedding model for --order semantic")
+    ap.add_argument("--ollama", default="http://localhost:11434", help="Ollama server URL")
     args = ap.parse_args()
 
-    cohorts, roots = parse_outline(args.outline)
-    if args.order == "auto":
-        roots, got, had = spectrum_order(roots)
-        print(f"order (also= links between neighbours: {had} -> {got}):")
+    cohorts, roots, anchors = parse_outline(args.outline)
+    if args.order in ("auto", "semantic"):
+        sim, toward = (semantic_similarity(roots, args.model, args.ollama, anchors)
+                       if args.order == "semantic" else (None, None))
+        roots, got, had, near, runners = spectrum_order(roots, sim, toward)
+        extra = f"; similarity of neighbours {near:.3f} ({args.model})" if sim else ""
+        print(f"order (also= links between neighbours: {had} -> {got}{extra}):")
         for r in roots:
             print(f"    # {r.label}")
+        if sim:
+            ends = " / ".join(f"@{k} {anchors[k]}" for k in ("top", "bottom") if anchors.get(k))
+            print(f"direction: {ends or 'first lineage in the file stays on top'}")
+        for k, (alt, gap) in enumerate(runners, 2):
+            print(f"runner-up {k} (similarity {gap:.3f} lower): " + " > ".join(r.label for r in alt))
     elif args.order == "axis":
         if not args.axis:
             ap.error("--order axis needs --axis FILE (see axes/ for examples)")

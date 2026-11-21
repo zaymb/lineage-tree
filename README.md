@@ -32,6 +32,7 @@ python3 lineage_tree.py outline.md                 # writes outline.svg
 python3 lineage_tree.py outline.md -o lineage.svg
 python3 lineage_tree.py outline.md --order axis --axis axes/ddc.txt   # by class= on an axis
 python3 lineage_tree.py outline.md --order auto    # order lineages by shared also= names
+python3 lineage_tree.py outline.md --order semantic   # also= names first, then meaning (needs Ollama)
 ```
 
 For exact widths, set `font_file` in `STYLE` at the top of the script to the font you will
@@ -58,6 +59,8 @@ counted as full width.
 - `## name | stage | flags` is a name; it may have concepts under it or stand alone.
 - `### name | stage | flags` is a name that continues from the `##` name above it.
 - `- concept | stage | flags` is a concept under the nearest name.
+- `@top TEXT` and `@bottom TEXT` (optional) name what the two ends of the spectrum are about;
+  `--order semantic` uses them to decide which way up the page reads.
 - Flags: `keep` (lasted to the end, drawn red), `also=Other lineage` (also belongs to that
   lineage), `class=CODE` (position on an ordering axis, see below).
 - A child cannot be earlier than its parent. Inside a lineage, names are ordered by stage, then
@@ -74,7 +77,7 @@ concepts, lineages and order, one table each, and maps every answer to an outlin
 ## Ordering the lineages
 
 Top to bottom is meant to read as one continuous spectrum, and the order should come from a rule,
-not from re-arranging by hand each time. Three orders are built in:
+not from re-arranging by hand each time. Four orders are built in:
 
 - `--order file` (default): as written.
 - `--order axis --axis FILE`: by a classification read as a line. The axis is a text file, one
@@ -87,6 +90,19 @@ not from re-arranging by hand each time. Three orders are built in:
 - `--order auto`: by shared names. Lineages whose names carry `also=` tags pointing at each other
   are put next to each other; among equally good orders the one closest to the file order wins,
   so lineages with no shared names stay where they are.
+
+- `--order semantic`: constrained seriation. Seriation is the archaeologist's problem of putting
+  finds in a sequence from their likeness alone (Flinders Petrie used it to order Egyptian
+  graves, 1899); here the finds are lineages. `also=` links come first and are never broken:
+  lineages that share names stay together. The remaining freedom is settled by meaning: each
+  lineage is embedded as its label plus every name under it, and among all orders that keep the
+  links, the one whose neighbours are most alike wins (exhaustive up to 9 lineages). A chain of
+  likeness has no direction, so the end closer to `@top` goes on top (or, without anchors, the
+  end holding the file's first lineage). The output also prints the two runners-up and how much
+  less alike their neighbours are, so a close call is visible. Needs a local
+  [Ollama](https://ollama.com) server; the default model is `qwen3-embedding:4b`
+  (`--model`, `--ollama` to change). Use `--order axis` as well when you want a classification
+  to have the last word.
 
 Which lineage a name belongs to stays a judgement. The questionnaire gives one test for it:
 *what question was I asking when I picked this up?*

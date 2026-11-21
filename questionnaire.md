@@ -76,6 +76,14 @@ ones it shares names with. You can either
 - leave it to `python3 lineage_tree.py outline.md --order auto`, which puts lineages that share
   `also=` names next to each other. Lineages with no shared names keep the order you wrote them
   in, so the more "also answers" you fill in above, the more of the spectrum it can work out.
+- or use `--order semantic`, which keeps the `also=` neighbours together and places the rest by
+  how close their names are in meaning. Write what the two ends of your spectrum are about on
+  `@top` and `@bottom` lines so it knows which way up to read.
+
+| End | What it is about |
+|---|---|
+| `@top` | |
+| `@bottom` | |
 
 | Order | Lineage | Shares names with |
 |---|---|---|
