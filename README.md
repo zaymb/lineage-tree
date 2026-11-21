@@ -30,7 +30,7 @@ font file.
 ```
 python3 lineage_tree.py outline.md                 # writes outline.svg
 python3 lineage_tree.py outline.md -o lineage.svg
-python3 lineage_tree.py outline.md --order axis --axis axes/ddc.txt     # order lineages by class= on an axis
+python3 lineage_tree.py outline.md --order axis --axis axes/ddc.txt   # by class= on an axis
 python3 lineage_tree.py outline.md --order auto    # order lineages by shared also= names
 ```
 
@@ -77,12 +77,13 @@ Top to bottom is meant to read as one continuous spectrum, and the order should 
 not from re-arranging by hand each time. Three orders are built in:
 
 - `--order file` (default): as written.
-- `--order axis --axis axes/ddc.txt` / `--order warburg`: by a standard classification read as a line. Tag any line
-  with `class=`; a lineage sits at the median position of the classes on it and under it, and
-  lineages without any class go last. `ddc` takes Dewey Decimal numbers (`class=720.9`; the
-  subdivision keeps its place inside the main class) or main-class labels; `warburg` takes the
-  four categories of the Warburg Institute Library (`class=Image`, `Word`, `Orientation`,
-  `Action`). More axes are a list in `AXES` at the top of the script.
+- `--order axis --axis FILE`: by a classification read as a line. The axis is a text file, one
+  class per line, in order; the tool itself ships no classification. Tag any line with
+  `class=`; a lineage sits at the median position of the classes on it and under it, and
+  lineages without any class go last. If the axis lines start with numbers, numeric codes are
+  placed by value between them, so `class=720.9` keeps its place inside `700`.
+  [`axes/`](axes/) has two examples: Dewey Decimal main classes and the four categories of the
+  Warburg Institute Library (Image, Word, Orientation, Action). Write your own for any typology.
 - `--order auto`: by shared names. Lineages whose names carry `also=` tags pointing at each other
   are put next to each other; among equally good orders the one closest to the file order wins,
   so lineages with no shared names stay where they are.
