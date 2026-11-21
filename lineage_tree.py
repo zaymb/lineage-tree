@@ -542,6 +542,9 @@ def main():
         print(f"order (also= links between neighbours: {had} -> {got}{extra}):")
         for r in roots:
             print(f"    # {r.label}")
+        apart = [(i, j, k) for (i, j), k in links_between(roots).items() if j - i > 1]
+        for i, j, k in apart:
+            print(f"    not neighbours: {roots[i].label} – {roots[j].label} ({k} also= link{'s' * (k > 1)})")
         if sim:
             ends = " / ".join(f"@{k} {anchors[k]}" for k in ("top", "bottom") if anchors.get(k))
             print(f"direction: {ends or 'first lineage in the file stays on top'}")

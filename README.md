@@ -94,8 +94,8 @@ not from re-arranging by hand each time. Four orders are built in:
 
 - `--order semantic`: constrained seriation. Seriation is the archaeologist's problem of putting
   finds in a sequence from their likeness alone (Flinders Petrie used it to order Egyptian
-  graves, 1899); here the finds are lineages. `also=` links come first and are never broken:
-  lineages that share names stay together. The remaining freedom is settled by meaning: each
+  graves, 1899); here the finds are lineages. `also=` links come first: the order keeps as many of
+  them between neighbours as a line allows, and prints any pair it had to set apart. The remaining freedom is settled by meaning: each
   lineage is embedded as its label plus every name under it, and among all orders that keep the
   links, the one whose neighbours are most alike wins (exhaustive up to 9 lineages). A famous
   name already means something to the model; a little-known one (a studio, a local archive, your
@@ -108,7 +108,10 @@ not from re-arranging by hand each time. Four orders are built in:
   (`--model`, `--ollama` to change). [`example/cold.md`](example/cold.md) is a made-up project
   in which no name is known to the model; there, names alone order the five lineages worse than
   chance (Kendall τ −0.2 against the intended order), and adding `gave=` brings it to 0.4: one
-  lineage still lands in a different place. Use `--order axis` as well when you want a classification
+  lineage still lands in a different place. That place is not simply wrong: the model put the
+  residents' stories next to the models built with residents, reading the project by who took
+  part, where the intended order reads it by medium. A semantic order is one grounded reading of
+  the project, not the answer; the runners-up are where to look for another. Use `--order axis` as well when you want a classification
   to have the last word.
 
 Which lineage a name belongs to stays a judgement. The questionnaire gives one test for it:
