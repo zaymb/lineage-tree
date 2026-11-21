@@ -221,7 +221,9 @@ def spectrum_order(roots, sim=None, toward=None):
     Links and similarity have no direction. With `toward` (each lineage's similarity to the
     @top anchor minus its similarity to the @bottom anchor), the end closer to @top goes on top;
     otherwise the end holding the file's first lineage does. Returns the order, its link score,
-    the file order's link score, its similarity score, and the runners-up as (order, gap).
+    the file order's link score, its similarity score, the runners-up as (order, gap), and the
+    spread of similarity over all orders that keep the links: (sd, how many, how many within
+    a quarter sd of the best), or None above 9 lineages.
     """
     n = len(roots)
     links = links_between(roots)
@@ -235,6 +237,10 @@ def spectrum_order(roots, sim=None, toward=None):
         ranked = sorted(permutations(range(n)), key=lambda p: (score(p), near(p), -swaps(p)),
                         reverse=True)
         best, seen, runners = ranked[0], {min(ranked[0], ranked[0][::-1])}, []
+        legal = [near(p) for p in ranked if score(p) == score(best) and p < p[::-1]]
+        mean = sum(legal) / len(legal)
+        sd = (sum((x - mean) ** 2 for x in legal) / len(legal)) ** 0.5 or 1.0
+        spread = (sd, len(legal), sum(near(best) - x <= sd / 4 for x in legal))
         for p in ranked[1:]:
             if len(runners) == 2 or sim is None:
                 break
@@ -242,7 +248,7 @@ def spectrum_order(roots, sim=None, toward=None):
                 seen.add(min(p, p[::-1]))
                 runners.append(p)
     else:
-        runners = []
+        runners, spread = [], None
         left = set(range(n))
         a, b = max(((a, b) for a in left for b in left if a < b), key=lambda e: (w(*e), -e[0]))
         best, left = [a, b], left - {a, b}
@@ -267,7 +273,7 @@ def spectrum_order(roots, sim=None, toward=None):
 
     best = orient(best)
     runners = [([roots[i] for i in orient(p)], near(best) - near(p)) for p in runners]
-    return [roots[i] for i in best], score(best), score(list(range(n))), near(best), runners
+    return [roots[i] for i in best], score(best), score(list(range(n))), near(best), runners, spread
 
 
 def semantic_similarity(roots, model, url, anchors=None):
@@ -517,7 +523,7 @@ def main():
     if args.order in ("auto", "semantic"):
         sim, toward = (semantic_similarity(roots, args.model, args.ollama, anchors)
                        if args.order == "semantic" else (None, None))
-        roots, got, had, near, runners = spectrum_order(roots, sim, toward)
+        roots, got, had, near, runners, spread = spectrum_order(roots, sim, toward)
         extra = f"; similarity of neighbours {near:.3f} ({args.model})" if sim else ""
         print(f"order (also= links between neighbours: {had} -> {got}{extra}):")
         for r in roots:
@@ -526,7 +532,11 @@ def main():
             ends = " / ".join(f"@{k} {anchors[k]}" for k in ("top", "bottom") if anchors.get(k))
             print(f"direction: {ends or 'first lineage in the file stays on top'}")
         for k, (alt, gap) in enumerate(runners, 2):
-            print(f"runner-up {k} (similarity {gap:.3f} lower): " + " > ".join(r.label for r in alt))
+            sds = f", {gap / spread[0]:.2f} sd" if spread else ""
+            print(f"runner-up {k} (similarity {gap:.3f} lower{sds}): " + " > ".join(r.label for r in alt))
+        if sim and spread:
+            print(f"{spread[2]} of {spread[1]} orders that keep the also= links are within "
+                  f"a quarter sd ({spread[0] / 4:.3f}) of the best")
     elif args.order == "axis":
         if not args.axis:
             ap.error("--order axis needs --axis FILE (see axes/ for examples)")
