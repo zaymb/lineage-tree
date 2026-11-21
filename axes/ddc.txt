@@ -1,0 +1,12 @@
+# Dewey Decimal Classification, main classes in order. Numeric class= codes (e.g. 720.9)
+# are placed by value inside this range.
+000 General works
+100 Philosophy and psychology
+200 Religion
+300 Social sciences
+400 Language
+500 Science
+600 Technology
+700 Arts and recreation
+800 Literature
+900 History and geography

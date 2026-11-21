@@ -4,7 +4,7 @@
     python3 lineage_tree.py lineage_names.md            -> lineage_names.svg
     python3 lineage_tree.py lineage_names.md -o out.svg
     python3 lineage_tree.py lineage_names.md --order auto   # reorder lineages into a spectrum
-    python3 lineage_tree.py lineage_names.md --order ddc    # order by class= tags on an axis
+    python3 lineage_tree.py lineage_names.md --order axis --axis axes/ddc.txt   # by class= tags
 
 Reading the drawing
     Across a dashed line is time: a label sits in the cohort where it first appears.
@@ -31,7 +31,7 @@ Outline format (see the top of lineage_names.md)
     > note                            ignored
     flags:  keep                      lasted to the end
             also=Other lineage        also belongs to that lineage (dashed link)
-            class=720                 position on an ordering axis (--order ddc / warburg)
+            class=720                 position on an ordering axis (--order axis --axis FILE)
 """
 import argparse
 import re
@@ -74,7 +74,7 @@ STYLE = dict(
 
 class Node:
     def __init__(self, label, cohort=None, keep=False, also=None):
-        self.cls = None           # class= value: a key on the ordering axis (see AXES)
+        self.cls = None           # class= value: a key on the ordering axis (see --axis)
         self.label = label
         self.cohort = cohort      # index into cohorts; None on a heading = earliest child
         self.keep = keep
@@ -141,33 +141,38 @@ def parse_outline(path):
 
 # ---------------------------------------------------------------- lineage order
 
-# Ordering axes: a standard classification read as one continuous spectrum. A `class=` flag on
-# any line names a position on the axis, either by its number or by its label.
-AXES = {
-    # Dewey Decimal Classification, the ten main classes in their standard order.
-    "ddc": ["000 General works", "100 Philosophy and psychology", "200 Religion",
-            "300 Social sciences", "400 Language", "500 Science", "600 Technology",
-            "700 Arts and recreation", "800 Literature", "900 History and geography"],
-    # The four categories of the Warburg Institute Library.
-    "warburg": ["Image", "Word", "Orientation", "Action"],
-}
+def load_axis(path):
+    """An ordering axis: a text file, one class per line, in order; # starts a comment.
+
+    A line may start with a number ("720 Architecture"); then numeric class= codes are placed
+    by value between the numbered lines, so subdivisions keep their order.
+    """
+    keys = [l.split("#", 1)[0].strip() for l in Path(path).read_text(encoding="utf-8").splitlines()]
+    keys = [k for k in keys if k]
+    if not keys:
+        sys.exit(f"{path}: empty axis")
+    return keys
 
 
-def axis_position(cls, axis, where):
-    """Position of a class= value on the axis: exact label, leading code, or a DDC number."""
-    keys = AXES[axis]
+def axis_position(cls, keys, where):
+    """Position of a class= value on the axis: a label, a leading code, or a number between codes."""
     low = cls.lower()
     for i, k in enumerate(keys):
         if low == k.lower() or low == k.split(" ", 1)[0].lower() or low == k.split(" ", 1)[-1].lower():
             return float(i)
-    if axis == "ddc":
-        m = re.match(r"(\d{1,3})(\.\d+)?$", cls)
-        if m:
-            return float(cls) / 100                   # 720.9 -> 7.209: subdivisions keep their order
-    sys.exit(f"'{where}': class={cls} is not on the {axis} axis ({', '.join(keys)})")
+    nums = [(float(k.split(" ", 1)[0]), i) for i, k in enumerate(keys)
+            if re.match(r"\d+(\.\d+)?$", k.split(" ", 1)[0])]
+    if nums and re.match(r"\d+(\.\d+)?$", cls):
+        v = float(cls)
+        below = [(n, i) for n, i in nums if n <= v]
+        if below:
+            n, i = max(below)
+            nxt = [m for m, _ in nums if m > n]
+            return i + ((v - n) / (min(nxt) - n) if nxt else 0)
+    sys.exit(f"'{where}': class={cls} is not on the axis ({', '.join(keys)})")
 
 
-def axis_order(roots, axis):
+def axis_order(roots, keys):
     """Order lineages by where their names sit on the axis.
 
     A lineage's position is the median of the class= positions found on it and everything under
@@ -176,7 +181,7 @@ def axis_order(roots, axis):
     """
     keyed = []
     for i, root in enumerate(roots):
-        pos = sorted(axis_position(n.cls, axis, n.label) for n in walk([root]) if n.cls)
+        pos = sorted(axis_position(n.cls, keys, n.label) for n in walk([root]) if n.cls)
         mid = (pos[(len(pos) - 1) // 2] + pos[len(pos) // 2]) / 2 if pos else None
         keyed.append((mid is None, mid if mid is not None else 0, i, root))
     keyed.sort(key=lambda k: k[:3])
@@ -433,9 +438,10 @@ def main():
     ap = argparse.ArgumentParser(description="Draw a cohort-column tree from a Markdown outline.")
     ap.add_argument("outline")
     ap.add_argument("-o", "--output")
-    ap.add_argument("--order", choices=["file", "auto"] + sorted(AXES), default="file",
-                    help="lineage order top to bottom: as written (default); auto = a spectrum "
-                         "from the also= links; ddc / warburg = by the class= tags on that axis")
+    ap.add_argument("--order", choices=["file", "auto", "axis"], default="file",
+                    help="lineage order top to bottom: as written (default); auto = by shared "
+                         "also= names; axis = by the class= tags on the --axis file")
+    ap.add_argument("--axis", help="ordering axis for --order axis: a text file, one class per line")
     args = ap.parse_args()
 
     cohorts, roots = parse_outline(args.outline)
@@ -444,9 +450,11 @@ def main():
         print(f"order (also= links between neighbours: {had} -> {got}):")
         for r in roots:
             print(f"    # {r.label}")
-    elif args.order in AXES:
-        roots, report = axis_order(roots, args.order)
-        print(f"order on the {args.order} axis (median class position):")
+    elif args.order == "axis":
+        if not args.axis:
+            ap.error("--order axis needs --axis FILE (see axes/ for examples)")
+        roots, report = axis_order(roots, load_axis(args.axis))
+        print(f"order on {args.axis} (median class position):")
         for label, pos in report:
             print(f"    {'unclassified' if pos is None else f'{pos:6.2f}'}  # {label}")
     svg, width, height = render(roots, cohorts, STYLE)

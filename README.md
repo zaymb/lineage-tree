@@ -6,7 +6,7 @@ precedents came in at which stage, which ones branched, and which ones lasted to
 ![Example lineage](example/sample.svg)
 
 The example ([`example/sample.md`](example/sample.md)) is a made-up research project, ordered
-with `--order ddc`.
+with `--order axis --axis axes/ddc.txt`.
 
 ## Reading the drawing
 
@@ -30,7 +30,7 @@ font file.
 ```
 python3 lineage_tree.py outline.md                 # writes outline.svg
 python3 lineage_tree.py outline.md -o lineage.svg
-python3 lineage_tree.py outline.md --order ddc     # order lineages by class= on an axis
+python3 lineage_tree.py outline.md --order axis --axis axes/ddc.txt     # order lineages by class= on an axis
 python3 lineage_tree.py outline.md --order auto    # order lineages by shared also= names
 ```
 
@@ -77,7 +77,7 @@ Top to bottom is meant to read as one continuous spectrum, and the order should 
 not from re-arranging by hand each time. Three orders are built in:
 
 - `--order file` (default): as written.
-- `--order ddc` / `--order warburg`: by a standard classification read as a line. Tag any line
+- `--order axis --axis axes/ddc.txt` / `--order warburg`: by a standard classification read as a line. Tag any line
   with `class=`; a lineage sits at the median position of the classes on it and under it, and
   lineages without any class go last. `ddc` takes Dewey Decimal numbers (`class=720.9`; the
   subdivision keeps its place inside the main class) or main-class labels; `warburg` takes the

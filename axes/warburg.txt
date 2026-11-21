@@ -1,0 +1,5 @@
+# The four categories of the Warburg Institute Library.
+Image
+Word
+Orientation
+Action

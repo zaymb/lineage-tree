@@ -1,7 +1,7 @@
 > A made-up lineage for a design research project, to show the format.
 > Render it with:
->     python3 lineage_tree.py example/sample.md --order ddc
-> class= tags use Dewey Decimal numbers; --order ddc sorts the lineages by them.
+>     python3 lineage_tree.py example/sample.md --order axis --axis axes/ddc.txt
+> class= tags use Dewey Decimal numbers; --order axis --axis axes/ddc.txt sorts the lineages by them.
 
 @cohort Brief
 @cohort Concept
